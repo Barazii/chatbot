@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(test_constructor_without_arguments)
 {
     // Test default constructor
     ChatBot chatbot;
-    BOOST_CHECK(buffer.str().find("ChatBot Constructor Without Memory Allocation") != std::string::npos);
+    BOOST_CHECK(buffer.str().find("ChatBot Constructor without memory allocation") != std::string::npos);
     buffer.str("");
 
     BOOST_ASSERT(chatbot.GetChatLogicHandle() == nullptr);
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(test_constructor_with_arguments)
 {
     // Test constructor with filename
     ChatBot chatbot("../images/user.png");
-    BOOST_CHECK(buffer.str().find("ChatBot Constructor With Memory Allocation") != std::string::npos);
+    BOOST_CHECK(buffer.str().find("ChatBot Constructor with memory allocation") != std::string::npos);
     buffer.str("");
 
     BOOST_ASSERT(chatbot.GetChatLogicHandle() == nullptr);
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE(test_move_assignment)
 
     // Test move assignment
     chatbot1 = std::move(chatbot2);
-    BOOST_CHECK(buffer.str().find("ChatBot Move Assignment Constructor") != std::string::npos);
+    BOOST_CHECK(buffer.str().find("ChatBot Move Assignment Operator") != std::string::npos);
     buffer.str("");
 
     BOOST_ASSERT(chatbot1.GetImageHandle() != NULL);
