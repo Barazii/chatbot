@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 #include "chatgui.h"
+#include "graphnode.h"
+#include "graphedge.h"
 
 // forward declarations
 class ChatBot;
@@ -18,7 +20,7 @@ private:
 
     // data handles (not owned)
     GraphNode *_currentNode;
-    ChatBot *_chatBot;
+    ChatBot *_chatBot{};
     ChatBotPanelDialog *_panelDialog;
 
     // proprietary type definitions
@@ -30,8 +32,8 @@ private:
 
 public:
     // constructor / destructor
-    ChatLogic();
-    ~ChatLogic();
+    ChatLogic() = default;
+    ~ChatLogic() = default;
 
     // getter / setter
     void SetPanelDialogHandle(ChatBotPanelDialog *panelDialog);

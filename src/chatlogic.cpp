@@ -11,27 +11,6 @@
 #include "chatbot.h"
 #include "chatlogic.h"
 
-ChatLogic::ChatLogic()
-{
-    //// STUDENT CODE
-    ////
-
-    // create instance of chatbot
-    _chatBot = new ChatBot("../images/chatbot.png");
-
-    // add pointer to chatlogic so that chatbot answers can be passed on to the GUI
-    _chatBot->SetChatLogicHandle(this);
-
-    ////
-    //// EOF STUDENT CODE
-}
-
-ChatLogic::~ChatLogic()
-{
-    // delete chatbot instance
-    delete _chatBot;
-}
-
 template <typename T>
 void ChatLogic::AddAllTokensToElement(std::string tokenID, tokenlist &tokens, T &element)
 {
@@ -169,9 +148,6 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
         return;
     }
 
-    //// STUDENT CODE
-    ////
-
     // identify root node
     GraphNode *rootNode = nullptr;
     for (auto it = std::begin(_nodes); it != std::end(_nodes); ++it)
@@ -191,12 +167,12 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
         }
     }
 
+    ChatBot chatbot("../images/chatbot.png");
+    chatbot.SetChatLogicHandle(this);
     // add chatbot to graph root node
-    _chatBot->SetRootNode(rootNode);
-    rootNode->MoveChatbotHere(_chatBot);
-
-    ////
-    //// EOF STUDENT CODE
+    chatbot.SetRootNode(rootNode);
+    rootNode->MoveChatbotHere(std::move(chatbot));
+    _chatBot = rootNode->GetChatbot();
 }
 
 void ChatLogic::SetPanelDialogHandle(ChatBotPanelDialog *panelDialog)
