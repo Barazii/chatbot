@@ -4,6 +4,12 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(Membot)
 
+# debug symbols and disable optimization for debugging
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -Wall -Wextra")
+
 find_package(wxWidgets REQUIRED COMPONENTS core base)
 find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 

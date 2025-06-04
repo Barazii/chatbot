@@ -89,17 +89,38 @@ void ChatBotFrameImagePanel::paintNow()
 
 void ChatBotFrameImagePanel::render(wxDC &dc)
 {
-    // load backgroud image from file
+    // load background image from file
     wxString imgFile = imgBasePath + "sf_bridge.jpg";
     wxImage image;
-    image.LoadFile(imgFile);
+    
+    // Check if image file exists and can be loaded
+    if (!wxFileExists(imgFile))
+    {
+        wxLogError("Image file not found: %s", imgFile);
+        return;
+    }
+    
+    if (!image.LoadFile(imgFile))
+    {
+        wxLogError("Failed to load image: %s", imgFile);
+        return;
+    }
+    
+    // Check if image is valid before scaling
+    if (!image.IsOk())
+    {
+        wxLogError("Invalid image loaded from: %s", imgFile);
+        return;
+    }
 
     // rescale image to fit window dimensions
     wxSize sz = this->GetSize();
-    wxImage imgSmall = image.Rescale(sz.GetWidth(), sz.GetHeight(), wxIMAGE_QUALITY_HIGH);
-    _image = wxBitmap(imgSmall);
-
-    dc.DrawBitmap(_image, 0, 0, false);
+    if (sz.GetWidth() > 0 && sz.GetHeight() > 0)
+    {
+        wxImage imgSmall = image.Rescale(sz.GetWidth(), sz.GetHeight(), wxIMAGE_QUALITY_HIGH);
+        _image = wxBitmap(imgSmall);
+        dc.DrawBitmap(_image, 0, 0, false);
+    }
 }
 
 BEGIN_EVENT_TABLE(ChatBotPanelDialog, wxPanel)
@@ -167,13 +188,35 @@ void ChatBotPanelDialog::paintNow()
 void ChatBotPanelDialog::render(wxDC &dc)
 {
     wxImage image;
-    image.LoadFile(imgBasePath + "sf_bridge_inner.jpg");
+    wxString imgFile = imgBasePath + "sf_bridge_inner.jpg";
+    
+    // Check if image file exists and can be loaded
+    if (!wxFileExists(imgFile))
+    {
+        wxLogError("Image file not found: %s", imgFile);
+        return;
+    }
+    
+    if (!image.LoadFile(imgFile))
+    {
+        wxLogError("Failed to load image: %s", imgFile);
+        return;
+    }
+    
+    // Check if image is valid before scaling
+    if (!image.IsOk())
+    {
+        wxLogError("Invalid image loaded from: %s", imgFile);
+        return;
+    }
 
     wxSize sz = this->GetSize();
-    wxImage imgSmall = image.Rescale(sz.GetWidth(), sz.GetHeight(), wxIMAGE_QUALITY_HIGH);
-
-    _image = wxBitmap(imgSmall);
-    dc.DrawBitmap(_image, 0, 0, false);
+    if (sz.GetWidth() > 0 && sz.GetHeight() > 0)
+    {
+        wxImage imgSmall = image.Rescale(sz.GetWidth(), sz.GetHeight(), wxIMAGE_QUALITY_HIGH);
+        _image = wxBitmap(imgSmall);
+        dc.DrawBitmap(_image, 0, 0, false);
+    }
 }
 
 ChatBotPanelDialogItem::ChatBotPanelDialogItem(wxPanel *parent, wxString text, bool isFromUser)
@@ -183,7 +226,22 @@ ChatBotPanelDialogItem::ChatBotPanelDialogItem(wxPanel *parent, wxString text, b
     wxBitmap *bitmap = isFromUser == true ? nullptr : ((ChatBotPanelDialog *)parent)->GetChatLogicHandle()->GetImageFromChatbot();
 
     // create image and text
-    _chatBotImg = new wxStaticBitmap(this, wxID_ANY, (isFromUser ? wxBitmap(imgBasePath + "user.png", wxBITMAP_TYPE_PNG) : *bitmap), wxPoint(-1, -1), wxSize(-1, -1));
+    wxBitmap userBitmap;
+    if (isFromUser)
+    {
+        wxString userImgFile = imgBasePath + "user.png";
+        if (wxFileExists(userImgFile))
+        {
+            userBitmap = wxBitmap(userImgFile, wxBITMAP_TYPE_PNG);
+        }
+        else
+        {
+            // Create a default bitmap if user image not found
+            userBitmap = wxBitmap(32, 32);
+        }
+    }
+    
+    _chatBotImg = new wxStaticBitmap(this, wxID_ANY, (isFromUser ? userBitmap : *bitmap), wxPoint(-1, -1), wxSize(-1, -1));
     _chatBotTxt = new wxStaticText(this, wxID_ANY, text, wxPoint(-1, -1), wxSize(150, -1), wxALIGN_CENTRE | wxBORDER_NONE);
     _chatBotTxt->SetForegroundColour(isFromUser == true ? wxColor(*wxBLACK) : wxColor(*wxWHITE));
 
